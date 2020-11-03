@@ -28,18 +28,25 @@ class Application:
 
     def main(self):
 
-        schema_file = pathlib.Path("C:/Program Files/Microsoft SDKs/Service Fabric/schemas/ServiceFabricServiceModel.xsd")
-
         schema_root = None
         manifest_root = None
 
-        # read as bytes, or else you get:
-        # ValueError: Unicode strings with encoding declaration are not supported. Please use bytes input or XML fragments without declaration.
-        with open(schema_file, "rb") as f:
-            schema_root = etree.fromstring(f.read())
+        parser = None
 
-        schema = etree.XMLSchema(schema_root)
-        parser = etree.XMLParser(schema = schema)
+        # see if we are validating with a schema or not
+        if self.args.xsd_schema:
+            self.logger.info("loading XSD schema at `%s`", self.args.xsd_schema)
+
+            # read as bytes, or else you get:
+            # ValueError: Unicode strings with encoding declaration are not supported. Please use bytes input or XML fragments without declaration.
+            with open(self.args.xsd_schema, "rb") as f:
+                schema_root = etree.fromstring(f.read())
+
+            schema = etree.XMLSchema(schema_root)
+            parser = etree.XMLParser(schema = schema)
+
+        else:
+            parser = etree.XMLParser()
 
         try:
 
@@ -108,6 +115,7 @@ if __name__ == "__main__":
     # i can't really have hyphens in the argument name because if its positional, it doesn't translate it
     # to underscores, so just make them have underscores and then set the metavar one to have hyphens
     parser.add_argument('xml_to_verify', metavar="xml-to-verify", type=isFileType, help="the XML file to verify against the schema")
+    parser.add_argument("--xsd-schema", dest="xsd_schema", type=isFileType, help="if specified, the XSD scherma to validate against")
     parser.add_argument("--verbose", action="store_true", help="increase logging verbosity")
 
 

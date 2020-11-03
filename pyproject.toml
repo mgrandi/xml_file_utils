@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "validate_service_fabric_service_manifest"
+name = "xml_file_utils"
 version = "0.1.0"
 description = ""
 authors = ["Mark Grandi <mgrandi@microsoft.com>"]
