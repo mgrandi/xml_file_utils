@@ -37,12 +37,15 @@ class Application:
                 schema_root = etree.fromstring(f.read())
 
             schema = etree.XMLSchema(schema_root)
-            parser = etree.XMLParser(schema = schema)
+
+            # see https://lxml.de/4.0/FAQ.html#why-doesn-t-the-pretty-print-option-reformat-my-xml-output
+            parser = etree.XMLParser(schema = schema, remove_blank_text=True)
             self.logger.debug("parser: `%s`, with schema: `%s`", parser, schema)
 
         else:
 
-            parser = etree.XMLParser()
+            # see https://lxml.de/4.0/FAQ.html#why-doesn-t-the-pretty-print-option-reformat-my-xml-output
+            parser = etree.XMLParser(remove_blank_text=True)
             self.logger.debug("parser: `%s`", parser)
 
 
@@ -52,8 +55,8 @@ class Application:
 
             # see above about reading as bytes
             with open(self.args.xml_to_verify, "rb") as f:
-                manifest_root = etree.fromstring(f.read(), parser)
-
+                # manifest_root = etree.fromstring(f.read(), parser)
+                manifest_root = etree.parse(f, parser)
 
             self.logger.info("XML file validated successfully")
 
@@ -61,14 +64,27 @@ class Application:
                 raw_pretty_bytes = etree.tostring(manifest_root, pretty_print=True)
                 raw_pretty_str = raw_pretty_bytes.decode("utf-8")
                 self.logger.info("Parsed XML tree:")
-                self.logger.info(raw_pretty_str)
+                self.logger.info("\n" + raw_pretty_str)
 
         except etree.XMLSyntaxError as e:
 
-            self.logger.exception("XML file did not pass validation!")
+            error_str = "unknown"
+
+            if len(e.error_log) >= 1:
+                error_str = "Errors: "
+                for iter_error in e.error_log:
+                    error_str += f"\n{iter_error}"
+
+            # don't use `logger.exception` here as it seems to only include the to most error and that is kinda useless
+            # we build the `error_str` with all the errors so we will just use that
+            self.logger.error("XML file did not pass validation! error: `%s`", error_str)
+
+            raise Exception("XML file did not pass validation") from e
 
         except Exception as e:
             self.logger.exception("unhandled exception!")
+
+            raise e
 
 def isFileType(filePath):
     ''' see if the file path given to us by argparse is a file
