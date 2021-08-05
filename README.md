@@ -108,7 +108,7 @@ Exception: XML file did not pass validation
 2021-08-05T13:02:51.111193-07:00 MainThread root                 INFO    : Done!
 ```
 
-### validate an\ XML file with a schema #2
+### validate a XML file with a schema #2
 
 ```plaintext
 > python cli.py "C:\ApplicationManifest.xml" --xsd-schema "C:\Program Files\Microsoft SDKs\Service Fabric\schemas\ServiceFabricServiceModel.xsd"
