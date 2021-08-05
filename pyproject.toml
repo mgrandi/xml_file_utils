@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "xml_file_utils"
 version = "0.1.0"
-description = ""
+description = "xml utility scripts"
 authors = ["Mark Grandi <mgrandi@microsoft.com>"]
 
 [tool.poetry.dependencies]
