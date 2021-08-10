@@ -32,3 +32,23 @@ def isFileType(filePath):
         raise argparse.ArgumentTypeError("The path `{}` is not a file!".format(path_resolved))
 
     return path_resolved
+
+def hocon_config_file_type(stringArg):
+    ''' argparse type method that returns a pyhocon Config object
+    or raises an argparse.ArgumentTypeError if this file doesn't exist
+    @param stringArg - the argument given to us by argparse
+    @return a dict like object containing the configuration or raises ArgumentTypeError
+    '''
+
+    resolved_path = pathlib.Path(stringArg).expanduser().resolve()
+    if not resolved_path.exists:
+        raise argparse.ArgumentTypeError("The path {} doesn't exist!".format(resolved_path))
+
+    conf = None
+    try:
+        conf = pyhocon.ConfigFactory.parse_file(str(resolved_path))
+    except Exception as e:
+        raise argparse.ArgumentTypeError(
+            "Failed to parse the file `{}` as a HOCON file due to an exception: `{}`".format(resolved_path, e))
+
+    return conf

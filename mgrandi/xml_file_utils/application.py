@@ -8,6 +8,7 @@ import pathlib
 
 from mgrandi.xml_file_utils import utils
 from mgrandi.xml_file_utils.modules import xsd_schema
+from mgrandi.xml_file_utils.modules import xml_edit
 
 
 def main():
@@ -34,6 +35,8 @@ def main():
 
     subparsers = parser.add_subparsers()
     xsd_schema_obj = xsd_schema.VerifyXSDSchema.create_subparser_command(subparsers)
+    xml_edit_obj = xml_edit.XMLEdit.create_subparser_command(subparsers)
+
 
     try:
         parsed_args = parser.parse_args()
