@@ -8,6 +8,7 @@ authors = ["Mark Grandi <mgrandi@microsoft.com>"]
 python = "^3.9"
 lxml = "^4.6.1"
 arrow = "^0.17.0"
+attrs = "^21.2.0"
 
 [tool.poetry.dev-dependencies]
 
